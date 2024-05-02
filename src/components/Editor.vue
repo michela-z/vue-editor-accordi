@@ -12,7 +12,6 @@
         <div class="pulsanti">
             <button class="pulsante" @click="elaboraTesto"> elabora </button>
             <button class="pulsante" @click="salva">❤</button>
-            <button class="pulsante" @click="resetBold">reset RIT</button>
         </div>
 
         <label for="titolo">Quali accordi vuoi inserire sul testo?</label>
@@ -20,7 +19,7 @@
         <div class="modifica-accordi">
             <input type="text" class="get-accordo" onfocus="this.value=''" v-model="accordo">
             <button class="aggiungi" @click="getAccordo">add</button>
-            <button class="rimuovi" @click="rimuoviAccordo">remove</button>àaé
+            <button class="rimuovi" @click="rimuoviAccordo">remove</button>
         </div>
 
         <label for="titolo">Seleziona l'accordo che vuoi inserire sul testo</label>
@@ -30,7 +29,7 @@
         </div>
 
         <div class="guida">
-            <p><b>Evidenzia</b> il ritornello cliccando col tasto destro del mouse la linea desiderata.</p>
+            <p><b>Evidenzia</b> il ritornello cliccando col tasto destro del mouse sulla linea desiderata, clicca col il sinistro per annullare.</p>
             <p><b>Elimina</b> l'accordo inserito cliccando di nuovo sullo stesso.</p>
         </div>
 
@@ -46,21 +45,21 @@
             <div class="pagina-1 pagina">
                 <div class="cnt-acc-frase" v-for="(frase, index) in frasiUno" >
                     <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="testoFormattato" :class="{ evidenzia : indiceFrase.includes(index) }" :index="index" @contextmenu.prevent="indiceFrase.push(index)" >{{ frase }}</p>
+                    <p class="testo-formattato" ref="pag1" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
                 </div>
             </div>
 
             <div class="pagina-2 pagina">
                 <div class="cnt-acc-frase" v-for="(frase, index) in frasiDue" >
                     <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="testoFormattato" :class="{ evidenzia : indiceFrase.includes(index) }" :index="index" @contextmenu.prevent="indiceFrase.push(index)" >{{ frase }}</p>
+                    <p class="testo-formattato" ref="pag2" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
                 </div>
             </div>
 
             <div class="pagina-3 pagina">
                 <div class="cnt-acc-frase" v-for="(frase, index) in frasiTre" >
                     <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="testoFormattato" :class="{ evidenzia : indiceFrase.includes(index) }" :index="index" @contextmenu.prevent="indiceFrase.push(index)" >{{ frase }}</p>
+                    <p class="testo-formattato" ref="pag3" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
                 </div>
             </div>
 
@@ -73,9 +72,6 @@
 import { onMounted, ref, watch } from 'vue'
 import { preferito } from './preferito.js'
 import html2pdf from "html2pdf.js";
-import { mostra } from './mostra-preferiti';
-
-const name = ref('app')
 
 const titolo = ref('')
 const autore = ref('')
@@ -94,7 +90,11 @@ const accSelezionato = ref('')
 const accSel = ref(null)
 
 const evidenzia = ref(false)
-const indiceFrase = ref([''])
+const indiceFrase = ref([])
+const pag1 = ref(null)
+const pag2 = ref(null)
+const pag3 = ref(null)
+//const idPag = ref('')
 
 let arrayAcc = ref([])
 
@@ -124,10 +124,10 @@ function elaboraTesto() {
 
         if(frasiUno.value.length < 17) {
             frasiUno.value.push(frase)
-            console.log(frasiUno);
+            //console.log(frasiUno);
         } else if(frasiDue.value.length < 20) {
             frasiDue.value.push(frase)
-            console.log(frasiDue);
+            //console.log(frasiDue);
         } else{
             frasiTre.value.push(frase)
         }
@@ -183,8 +183,12 @@ function elimina(e) {
     }
 }
 
-function resetBold() {
-    indiceFrase.value = []
+function evidenziaRit(e) {
+    e.target.className = "evidenzia";
+}
+
+function resetBold(e) {
+    e.target.className = "testo-formattato";
 }
 
 function inserisciAccordo(e) {
@@ -227,6 +231,7 @@ function exportToPDF() {
         font-weight: bold;
         background: white;
         color: #3e3e3e;
+        margin-bottom: 10px
     }
 
     #app {
