@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..800;1,300..800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  /* border: solid blue 1px; */
+}
+
+body {
+  font-family: 'Montserrat';
+  color: #3e3e3e;
+}
+
+#app {
+  /* background-color: #000000; */
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  /* border: solid 1px rgb(0, 255, 98); */
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  margin-top: 40px;
+  max-width: 1000px;
+  min-width: 900px;
+  position: relative;
+  height: 100%;
+}
+
+.editor {
+  /* border: rgb(255, 161, 47) 2px solid; */
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+}
+
+.cnt-testo-finale {
+  position: absolute;
+  right: 0;
+  height: 100%;
+}
+/* .container-testo {
+  border: rgb(233, 233, 233) 1px solid;
+  margin-left: 20px;
+  padding: 20px;
+  z-index: 0;
+  width: 50vw;
+  max-width: 500px;
+} */
+.container-testo {
+  /* border: solid 0.5px #d8d8d8; */
+  border-radius: 20px;
+  padding: 20px;
+  width: 420px;
+  z-index: 0;
+  position: relative;
+  height: 90%;
+  margin-top: 30px;
+}
+
+.navbar {
+  color: white;
+  background-color: #2e7eff;
+  position: fixed;
+  width: 100vw;
+  height: 50px;
+  top: 0;
+  left: 0;
+
+  padding: 0 10%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  z-index: 50;
+}
+
+.testo-formattato {
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+label {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #adadad;
+  font-size: 0.9rem;
+}
+
+textarea {
+  border: #d8d8d8 1px solid;
+  border-radius: 30px;
+  padding: 15px 20px;
+}
+
+.pulsante {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  margin: 10px;
+
+}
+
+.aggiungi, .rimuovi {
+  padding: 5px 10px;
+}
+
+.modifica-accordi button {
+  background-color: #2e7eff;
+  color: white;
+  border: none;
+  margin: 2px;
+  border-radius: 5px;
+}
+
+#download-pdf {
+  background-color: #2e7eff;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0;
+}
+
+#download-pdf:hover {
+  background-color: #adadad;
+  color: white;
+}
+
+.guida {
+  width: 400px;
+  margin: 20px 0;
+}
+.guida p {
+  word-wrap: break-word;
+  color: #adadad;
+  font-size: 0.9rem;
+  margin: 10px 0;
+}
+
+.cnt-accordi {
+  border: solid #d8d8d8 1px;
+  border-radius: 20px;
+  width: 400px;
+  height: 50px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+
+#titolo, #autore {
+  padding-top: 7px;
+  height: 30px;
+}
+
+.accordi-formattati {
+  position: relative;
+  /* border: solid #ececec 1px; */
+  border-radius: 5px;
+  color: #ffffff;
+  height: 20px;
+}
+
+.accordi {
+  margin: 10px 0;
+  color: #2e7eff;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 0;
+}
+
+.btn-accordo {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 30px;
+  margin: 5px;
+
+  background-color: #d4d4d4;
+}
+
+.active {
+  background-color: #2e7eff;
+  color: white;
+}
+
+/* .nota {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #2e7eff;
+  border-radius: 10px;
+  padding: 0 5px;
+  font-weight: 600;
+
+  z-index: 5;
+} */
+
+.nota {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #2e7eff;
+  padding: 0 5px;
+  font-weight: 600;
+  z-index: 5;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.titolo {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.autore {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
