@@ -1,17 +1,18 @@
 <template>
     <div class="editor">
-        <label for="titolo">Inserisci il titolo</label>
-        <textarea name="titolo" id="titolo" cols="45" rows="1" v-model="titolo"></textarea>
+        <!-- <label for="titolo">Inserisci il titolo</label> -->
+        <textarea name="titolo" id="titolo" cols="45" rows="1" v-model="titolo" placeholder="Inserisci il titolo"></textarea>
 
-        <label for="autore">Inserisci l'autore</label>
-        <textarea name="autore" id="autore" cols="45" rows="1" v-model="autore"></textarea>
+        <!-- <label for="autore">Inserisci l'autore</label> -->
+        <textarea name="autore" id="autore" cols="45" rows="1" v-model="autore" placeholder="Inserisci l'autore"></textarea>
 
-        <label for="testo">Inserisci il testo</label>
-        <textarea name="testo" id="testo" cols="45" rows="10" v-model="testo">{{ testo }}</textarea>
+        <!-- <label for="testo">Inserisci il testo</label> -->
+        <textarea name="testo" id="testo" cols="45" rows="10" v-model="testo" placeholder="Inserisci il testo">{{ testo }}</textarea>
 
         <div class="pulsanti">
             <button class="pulsante" @click="elaboraTesto"> elabora </button>
             <button class="pulsante" @click="salva">❤</button>
+            <button class="pulsante" @click="reset"> reset </button>
         </div>
 
         <label for="titolo">Quali accordi vuoi inserire sul testo?</label>
@@ -27,6 +28,11 @@
         <div class="cnt-accordi">
             <button v-for="(accordo, index) in accordi" class="btn-accordo" @click="selezionato" :class="{ 'active': index === indice }" :index="index" ref="accSel">{{ accordo }}</button>
         </div>
+        <!-- <button @click="mostraNote">mostra note inserite</button> -->
+        <!-- <div>
+            <button @click="transpose">transpose +</button>
+            <button>transpose -</button>
+        </div> -->
 
         <div class="guida">
             <p><b>Evidenzia</b> il ritornello cliccando col tasto destro del mouse sulla linea desiderata, clicca col il sinistro per annullare.</p>
@@ -42,26 +48,31 @@
             <h1 class="titolo">{{ titolo }}</h1>
             <h4 class="autore">{{ autore }}</h4>
 
-            <div class="pagina-1 pagina">
-                <div class="cnt-acc-frase" v-for="(frase, index) in frasiUno" >
-                    <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="pag1" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
+            <div ref="cnt1">
+                <div class="pagina-1 pagina">
+                    <div class="cnt-acc-frase" v-for="(frase, index) in frasiUno" >
+                        <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
+                        <div ref="accSalvati"></div>
+                        <p class="testo-formattato" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
+                    </div>
+                </div>
+
+                <div class="pagina-2 pagina">
+                    <div class="cnt-acc-frase" v-for="(frase, index) in frasiDue" >
+                        <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
+                        <p class="testo-formattato" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
+                    </div>
+                </div>
+
+                <div class="pagina-3 pagina">
+                    <div class="cnt-acc-frase" v-for="(frase, index) in frasiTre" >
+                        <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
+                        <p class="testo-formattato" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="pagina-2 pagina">
-                <div class="cnt-acc-frase" v-for="(frase, index) in frasiDue" >
-                    <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="pag2" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
-                </div>
-            </div>
-
-            <div class="pagina-3 pagina">
-                <div class="cnt-acc-frase" v-for="(frase, index) in frasiTre" >
-                    <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
-                    <p class="testo-formattato" ref="pag3" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
-                </div>
-            </div>
+            <!-- <div ref="cnt2"></div> -->
 
         </div>
     </div>
@@ -76,24 +87,25 @@ import html2pdf from "html2pdf.js";
 const titolo = ref('')
 const autore = ref('')
 const testo = ref('')
+
 const frasiUno = ref([])
 const frasiDue = ref([])
 const frasiTre = ref([])
 
 const accordo = ref('')
 const accordi = ref([])
+const accTransp = ref([])
 
 const indice = ref('')
 const preferiti = ref([])
+
+const accSalvati = ref(null)
 
 const accSelezionato = ref('')
 const accSel = ref(null)
 
 const evidenzia = ref(false)
 const indiceFrase = ref([])
-const pag1 = ref(null)
-const pag2 = ref(null)
-const pag3 = ref(null)
 //const idPag = ref('')
 
 let arrayAcc = ref([])
@@ -102,6 +114,12 @@ const container = ref(null)
 const testoFormattato = ref(null)
 const nota = ref(null)
 
+const cnt1 = ref(null)
+//const cnt2 = ref(null)
+
+const testoeaccordi = ref('')
+
+const noteInserite = ref([])
 
 function elaboraTesto() {
     frasiUno.value = [];
@@ -135,10 +153,14 @@ function elaboraTesto() {
 }
 
 function salva() {
+    testoeaccordi.value = cnt1.value.innerHTML;
+
     preferiti.value.push({
         titolo: titolo.value,
         autore: autore.value,
-        testo: testo.value
+        //testo: testo.value,
+        // accordi: arrayAcc.value,
+        testoAccordi: testoeaccordi.value,
     })
 }
 
@@ -147,13 +169,20 @@ watch(preferiti, newVal => {
 }, { deep: true })
 
 watch(preferito, newVal => {
+    console.log('watch');
     let brani = localStorage.getItem('preferiti');
     let braniObj = JSON.parse(brani);
 
     titolo.value = newVal.titoloPref;
-
     autore.value = braniObj[preferito.index].autore;
-    testo.value = braniObj[preferito.index].testo;
+    //testo.value = braniObj[preferito.index].testo;
+    testoeaccordi.value = braniObj[preferito.index].testoAccordi;
+
+    //console.log(cnt1.value.innerHTML, testoeaccordi.value);
+    //cnt1.value.innerHTML = ''
+    //cnt2.value.innerHTML = testoeaccordi.value;
+
+    cnt1.value.innerHTML = testoeaccordi.value;
 })
 
 function getAccordo() {
@@ -165,9 +194,56 @@ function getAccordo() {
     }
 }
 
+function reset() {
+    // titolo.value = '';
+    // autore.value = '';
+    // testo.value = '';
+
+    // frasiUno.value = '';
+    // frasiDue.value = '';
+    // frasiTre.value = '';
+
+    location.reload()
+}
+
+// let note = ['do', 'do#', 're', 're#', 'mi', 'fa', 'fa#', 'sol', 'sol#', 'la', 'la#', 'si']
+// let n = 1;
+
+// function transpose() {
+//     if(n > 1) {
+//         console.log('if');
+//         console.log(n);
+//         accTransp.value.forEach(a => {
+//             console.log('note presa dal contenitore', a)
+//             let notaTrasp = note.indexOf(a) + 1;
+//             console.log(note.at(notaTrasp));
+//             accTransp.value = []
+//             accTransp.value.push(note.at(notaTrasp))
+//         })
+//     } else {
+//         console.log('else');
+//         console.log(n);
+//         accordi.value.forEach(a => {
+//             console.log('note presa dal contenitore', a)
+//             let notaTrasp = note.indexOf(a) + 1;
+//             console.log(note.at(notaTrasp));
+//             accordi.value = []
+//             accTransp.value.push(note.at(notaTrasp))
+//         })
+//     }
+//     n++
+// }
+
+function mostraNote() {
+    console.log(note);
+}
+
 function rimuoviAccordo() {
     let index = accordi.value.indexOf(accSelezionato.value);
     accordi.value.splice(index, 1)
+
+    // let index2 = accTransp.value.indexOf(accSelezionato.value);
+    // accTransp.value.splice(index2, 1)
 }
 
 function selezionato(e) {
@@ -195,6 +271,10 @@ function inserisciAccordo(e) {
     let xaxis = e.clientX - (window.innerWidth / 1.8);
     arrayAcc.value.push(`<div class="nota" style="transform: translateX(${xaxis}px)" @contexmenu.prevent="${elimina(e)}">${accSelezionato.value}</div>`);
     e.target.innerHTML = e.target.innerHTML + arrayAcc.value.slice(-1);
+
+    // mettere note all'interno di un array per trasporre direttamente le note sul testo, ma devo mdoficare l'innerHtml, è un bordello
+    // noteInserite.value.push(accSelezionato.value)
+    // console.log(noteInserite.value);
 }
 
 function exportToPDF() {

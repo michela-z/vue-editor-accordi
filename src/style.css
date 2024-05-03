@@ -39,6 +39,8 @@ body {
   justify-content: center;
   align-items: center;
   width: 400px;
+
+  margin-top: 30px;
 }
 
 .cnt-testo-finale {
@@ -99,6 +101,7 @@ textarea {
   border: #d8d8d8 1px solid;
   border-radius: 30px;
   padding: 15px 20px;
+  margin: 10px 0;
 }
 
 .pulsante {
@@ -240,7 +243,7 @@ h1 {
 
 
 /* @media only screen and (max-width: 600px) {
-  *{
+  {
     border: solid orange 0.5px;
   }
   #app {
