@@ -18,7 +18,6 @@
             <h4 class="autore">{{ autore }}</h4>
             <div class="testoeaccordi" ref="testoeaccordi"></div>
         </div>
-
     </div>
 </template>
 
@@ -46,7 +45,6 @@
             console.log('vuoto');
         }
     })
-
 
     function mostraTesto(e) {
         let brani = localStorage.getItem('preferiti');
@@ -79,7 +77,6 @@
 
         preferito.index = indice.value;
     }
-
 </script>
 
 

@@ -110,8 +110,8 @@ const cnt1 = ref(null)
 const testoeaccordi = ref('')
 const noteInserite = ref([])
 
-function elaboraTesto() {
 
+function elaboraTesto() {
     // pulire il testo
     // cnt1.value.childNodes.forEach( e => {
     //     let nodes = e.childNodes
@@ -165,11 +165,12 @@ watch(testiSalvati, newVal => {
     localStorage.setItem("preferiti", JSON.stringify(newVal));
 }, { deep: true })
 
-watchEffect( modifica => {
-    //console.log('watch effect');
+
+watchEffect( () => {
     titolo.value = preferito.titoloPref;
     autore.value = preferito.autorePref;
     testo.value = preferito.testoPref;
+
     //elaboraTesto()
 
     //console.log(testoeaccordi.value);
