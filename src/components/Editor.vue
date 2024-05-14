@@ -1,12 +1,9 @@
 <template>
     <div class="editor">
-        <!-- <label for="titolo">Inserisci il titolo</label> -->
         <textarea name="titolo" id="titolo" cols="45" rows="1" v-model="titolo" placeholder="Inserisci il titolo"></textarea>
 
-        <!-- <label for="autore">Inserisci l'autore</label> -->
         <textarea name="autore" id="autore" cols="45" rows="1" v-model="autore" placeholder="Inserisci l'autore"></textarea>
 
-        <!-- <label for="testo">Inserisci il testo</label> -->
         <textarea name="testo" id="testo" cols="45" rows="10" v-model="testo" placeholder="Inserisci il testo">{{ testo }}</textarea>
 
         <div class="pulsanti">
@@ -30,7 +27,8 @@
         </div>
         <!-- <button @click="mostraNote">mostra note inserite</button> -->
         <!-- <div>
-            <button @click="transpose">transpose +</button>
+            <button @click="transpose">transp\
+                \ose +</button>
             <button>transpose -</button>
         </div> -->
 
@@ -49,7 +47,7 @@
             <h4 class="autore">{{ autore }}</h4>
 
             <div ref="cnt1">
-                <div class="pagina-1 pagina">
+                <div class="pagina-1 pagina" ref="pagina1">
                     <div class="cnt-acc-frase" v-for="(frase, index) in frasiUno" >
                         <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
                         <div ref="accSalvati"></div>
@@ -57,14 +55,14 @@
                     </div>
                 </div>
 
-                <div class="pagina-2 pagina">
+                <div class="pagina-2 pagina" ref="pagina2">
                     <div class="cnt-acc-frase" v-for="(frase, index) in frasiDue" >
                         <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
                         <p class="testo-formattato" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
                     </div>
                 </div>
 
-                <div class="pagina-3 pagina">
+                <div class="pagina-3 pagina" ref="pagina3">
                     <div class="cnt-acc-frase" v-for="(frase, index) in frasiTre" >
                         <div class="accordi-formattati" @click="inserisciAccordo" :index="index" ref="container"></div>
                         <p class="testo-formattato" :index="index" @contextmenu.prevent="evidenziaRit" @click="resetBold">{{ frase }}</p>
@@ -72,17 +70,17 @@
                 </div>
             </div>
 
-            <!-- <div ref="cnt2"></div> -->
-
         </div>
     </div>
 
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { preferito } from './preferito.js'
+import { onMounted, ref, watch, watchEffect } from 'vue'
+import { preferito } from '../components/getTesto.js'
 import html2pdf from "html2pdf.js";
+import { testiSalvati } from '../components/testiSalvati.js'
+import { modifica } from './modifica';
 
 const titolo = ref('')
 const autore = ref('')
@@ -92,40 +90,42 @@ const frasiUno = ref([])
 const frasiDue = ref([])
 const frasiTre = ref([])
 
+const pagina1 = ref(null)
+const pagina2 = ref(null)
+const pagina3 = ref(null)
+
 const accordo = ref('')
 const accordi = ref([])
-const accTransp = ref([])
-
 const indice = ref('')
-const preferiti = ref([])
-
 const accSalvati = ref(null)
-
 const accSelezionato = ref('')
 const accSel = ref(null)
-
 const evidenzia = ref(false)
-const indiceFrase = ref([])
-//const idPag = ref('')
 
 let arrayAcc = ref([])
 
 const container = ref(null)
-const testoFormattato = ref(null)
 const nota = ref(null)
-
 const cnt1 = ref(null)
-//const cnt2 = ref(null)
-
 const testoeaccordi = ref('')
-
 const noteInserite = ref([])
 
 function elaboraTesto() {
+
+    // pulire il testo
+    // cnt1.value.childNodes.forEach( e => {
+    //     let nodes = e.childNodes
+    //     //console.log(nodes);
+    //     nodes.forEach( e => {
+    //         //console.log(e);
+    //         e.innerText = '';
+    //     })
+    // })
+
     frasiUno.value = [];
     frasiDue.value = [];
     frasiTre.value = [];
-    
+
     let indiceFineFrase = [0]
 
     for(let i = 0; i < testo.value.length; i++ ) {
@@ -142,10 +142,8 @@ function elaboraTesto() {
 
         if(frasiUno.value.length < 17) {
             frasiUno.value.push(frase)
-            //console.log(frasiUno);
         } else if(frasiDue.value.length < 20) {
             frasiDue.value.push(frase)
-            //console.log(frasiDue);
         } else{
             frasiTre.value.push(frase)
         }
@@ -155,34 +153,34 @@ function elaboraTesto() {
 function salva() {
     testoeaccordi.value = cnt1.value.innerHTML;
 
-    preferiti.value.push({
+    testiSalvati.push({
         titolo: titolo.value,
         autore: autore.value,
-        //testo: testo.value,
-        // accordi: arrayAcc.value,
-        testoAccordi: testoeaccordi.value,
+        testo: testo.value,
+        testoHTML: testoeaccordi.value,
     })
 }
 
-watch(preferiti, newVal => {
+watch(testiSalvati, newVal => {
     localStorage.setItem("preferiti", JSON.stringify(newVal));
 }, { deep: true })
 
-watch(preferito, newVal => {
-    console.log('watch');
-    let brani = localStorage.getItem('preferiti');
-    let braniObj = JSON.parse(brani);
+watchEffect( modifica => {
+    //console.log('watch effect');
+    titolo.value = preferito.titoloPref;
+    autore.value = preferito.autorePref;
+    testo.value = preferito.testoPref;
 
-    titolo.value = newVal.titoloPref;
-    autore.value = braniObj[preferito.index].autore;
-    //testo.value = braniObj[preferito.index].testo;
-    testoeaccordi.value = braniObj[preferito.index].testoAccordi;
+    elaboraTesto()
 
-    //console.log(cnt1.value.innerHTML, testoeaccordi.value);
-    //cnt1.value.innerHTML = ''
-    //cnt2.value.innerHTML = testoeaccordi.value;
+    //console.log(testoeaccordi.value);
+    //testoeaccordi.value.innerHTML = preferito.testoeaccPref;
 
-    cnt1.value.innerHTML = testoeaccordi.value;
+    //testoeaccordi.value.innerHTML = preferito.testoPref;
+    //autore.value = braniObj[index].autore;
+    //testo.value = braniObj[index].testo;
+    ////testoeaccordi.value.innerHTML = braniObj[index].testoHTML;
+    //console.log(braniObj[index].testoHTML);
 })
 
 function getAccordo() {
@@ -195,14 +193,6 @@ function getAccordo() {
 }
 
 function reset() {
-    // titolo.value = '';
-    // autore.value = '';
-    // testo.value = '';
-
-    // frasiUno.value = '';
-    // frasiDue.value = '';
-    // frasiTre.value = '';
-
     location.reload()
 }
 
@@ -234,9 +224,9 @@ function reset() {
 //     n++
 // }
 
-function mostraNote() {
-    console.log(note);
-}
+// function mostraNote() {
+//     console.log(note);
+// }
 
 function rimuoviAccordo() {
     let index = accordi.value.indexOf(accSelezionato.value);
@@ -253,7 +243,7 @@ function selezionato(e) {
 }
 
 function elimina(e) {
-    e.stopPropagation()    
+    e.stopPropagation()
     if(e.target.className === 'nota') {
         e.target.remove()
     }
@@ -271,18 +261,14 @@ function inserisciAccordo(e) {
     let xaxis = e.clientX - (window.innerWidth / 1.8);
     arrayAcc.value.push(`<div class="nota" style="transform: translateX(${xaxis}px)" @contexmenu.prevent="${elimina(e)}">${accSelezionato.value}</div>`);
     e.target.innerHTML = e.target.innerHTML + arrayAcc.value.slice(-1);
-
-    // mettere note all'interno di un array per trasporre direttamente le note sul testo, ma devo mdoficare l'innerHtml, è un bordello
-    // noteInserite.value.push(accSelezionato.value)
-    // console.log(noteInserite.value);
 }
 
 function exportToPDF() {
-    html2pdf(document.getElementById("element-to-convert"), 
-    {margin: 10, 
-        filename: `${titolo.value}.pdf`, 
-        image: {type: 'jpeg', quality: 100}, 
-        html2canvas: { scale: 2}, 
+    html2pdf(document.getElementById("element-to-convert"),
+    {margin: 10,
+        filename: `${titolo.value}.pdf`,
+        image: {type: 'jpeg', quality: 100},
+        html2canvas: { scale: 2},
         pagebreak: { mode: "css", after: ".pagina"}
     })
 }

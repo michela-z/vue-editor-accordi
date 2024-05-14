@@ -1,11 +1,8 @@
 <template>
   <Navbar />
-  <div class="container">
-    <Editor />
-  </div>
+  <router-view></router-view>
 </template>
 
 <script setup>
-  import Editor from './components/Editor.vue';
-  import Navbar from './components/Navbar.vue';
+import Navbar from './components/Navbar.vue';
 </script>
