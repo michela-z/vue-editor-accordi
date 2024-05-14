@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { preferito } from '../components/getTesto.js'
 import html2pdf from "html2pdf.js";
 import { testiSalvati } from '../components/testiSalvati.js'
@@ -170,8 +170,7 @@ watchEffect( modifica => {
     titolo.value = preferito.titoloPref;
     autore.value = preferito.autorePref;
     testo.value = preferito.testoPref;
-
-    elaboraTesto()
+    //elaboraTesto()
 
     //console.log(testoeaccordi.value);
     //testoeaccordi.value.innerHTML = preferito.testoeaccPref;
